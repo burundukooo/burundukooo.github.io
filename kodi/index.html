@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>json-txt</title>
+</head>
+<style>
+table {
+  width: 100%;
+  border: 0px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  width: 50%;
+  vertical-align: top;
+  border: 0px solid black;
+}
+button {
+  width: 100%;
+}
+textarea {
+  border: 1 none;
+  resize: none;
+  min-height: 100px;
+  height: 80vh;
+  width: 100%;
+}
+</style>
+<body>
+
+<script>
+function json_beautify() {
+  var obj = JSON.parse(document.getElementById("txt_json").value);
+  document.getElementById("txt_json").value = JSON.stringify(obj, null, 2);
+}
+function json_uglify() {
+  var obj = JSON.parse(document.getElementById("txt_json").value);
+  document.getElementById("txt_json").value = JSON.stringify(obj, null);
+}
+function json2txt() {
+  var obj = JSON.parse(document.getElementById("txt_json").value);
+  var res = "";
+  for (i = 0; i < obj[0].SerialIds.length; i++) {
+    res += obj[0].SerialIds[i] + "\n";
+  }
+  document.getElementById("txt_txt").value = res;
+}
+function txt2json() {
+  var all_lines = document.getElementById("txt_txt").value.split("\n");
+  // remove empty lines
+  var lines = [];
+  for(i = 0; i < all_lines.length; i++) {
+    if(all_lines[i] != "" )
+      lines.push( all_lines[i] );
+  }
+  
+  // update json object
+  var obj = JSON.parse(document.getElementById("txt_json").value);
+  obj[0].SerialIds = lines;
+  document.getElementById("txt_json").value = JSON.stringify(obj, null, 2);
+}
+</script>
+
+<table>
+  <tr>
+    <td>
+      <button onclick="json2txt()">Uztaisi .txt</button>
+      <button onclick="json_beautify()">Izskaistini .jsonu</button>
+      <button onclick="json_uglify()">Saspied .jsonu</button>
+    </td>
+    <td><button onclick="txt2json()">Iebāz atpakaļ .jsonā</button></td>
+  </tr>
+  <tr>
+    <td>
+      <textarea id="txt_json"></textarea>
+    </td>
+    <td>
+      <textarea id="txt_txt"></textarea>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
