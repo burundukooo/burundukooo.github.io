@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>json-txt</title>
+<title>json-txt v02</title>
 </head>
 <style>
 table {
@@ -10,7 +10,7 @@ table {
   border-collapse: collapse;
 }
 th, td {
-  width: 50%;
+  width: 33%;
   vertical-align: top;
   border: 0px solid black;
 }
@@ -32,52 +32,128 @@ function json_beautify() {
   var obj = JSON.parse(document.getElementById("txt_json").value);
   document.getElementById("txt_json").value = JSON.stringify(obj, null, 2);
 }
+
 function json_uglify() {
   var obj = JSON.parse(document.getElementById("txt_json").value);
   document.getElementById("txt_json").value = JSON.stringify(obj, null);
 }
-function json2txt() {
+
+function json_to_serial() {
   var obj = JSON.parse(document.getElementById("txt_json").value);
   var res = "";
+  var count = 0;
+
   for (i = 0; i < obj[0].SerialIds.length; i++) {
     res += obj[0].SerialIds[i] + "\n";
+    count++;
   }
-  document.getElementById("txt_txt").value = res;
+  document.getElementById("txt_serial").value = res;
+
+  var log_txt = "Izvilkti " + count.toString() + " seriālie";;
+  document.getElementById("txt_log").innerHTML = log_txt;
+  console.log(log_txt);
 }
-function txt2json() {
-  var all_lines = document.getElementById("txt_txt").value.split("\n");
+
+function serial_to_json() {
+  var all_lines = document.getElementById("txt_serial").value.split("\n");
+  var count = 0;
+
   // remove empty lines
   var lines = [];
   for(i = 0; i < all_lines.length; i++) {
-    if(all_lines[i] != "" )
+    if(all_lines[i] != "" ) {
       lines.push( all_lines[i] );
+      count++;
+    }
   }
-  
+
   // update json object
   var obj = JSON.parse(document.getElementById("txt_json").value);
   obj[0].SerialIds = lines;
   document.getElementById("txt_json").value = JSON.stringify(obj, null, 2);
+
+  var log_txt = "Iebāzti " + count.toString() + " seriālie";
+  document.getElementById("txt_log").innerHTML = log_txt;
+  console.log(log_txt);
+}
+
+function serial_delete_from_json() {
+  var all_lines = document.getElementById("txt_serial").value.split("\n");
+  var lines = [];
+  var count = 0;
+
+  // update json object
+  var obj = JSON.parse(document.getElementById("txt_json").value);
+
+  // keep only serials which are not present in all_lines
+  for(i = 0; i < obj[0].SerialIds.length; i++) {
+    if(all_lines.indexOf(obj[0].SerialIds[i]) == -1) {
+      lines.push(obj[0].SerialIds[i]);
+    } else {
+      count++;
+    }
+  }
+
+  // update json object
+  obj[0].SerialIds = lines;
+  document.getElementById("txt_json").value = JSON.stringify(obj, null, 2);
+
+  var log_txt = "Izdzēsti " + count.toString() + " seriālie";
+  document.getElementById("txt_log").innerHTML = log_txt;
+  console.log(log_txt);
+}
+
+function zebra_to_serial() {
+  var all_lines = document.getElementById("txt_zebra").value.split("\n");
+  var count = 0;
+
+  // remove & filter empty lines
+  var res = "";
+
+  for(i = 0; i < all_lines.length; i++) {
+    if(all_lines[i] != "")
+    {
+      // extract last 14 symbols
+      var serial = all_lines[i].substring(all_lines[i].length - 14);
+      res += serial + "\n";
+      count++;
+    }
+  }
+  document.getElementById("txt_serial").value = res;
+
+  var log_txt = "Izvilkti " + count.toString() + " seriālie";
+  document.getElementById("txt_log").innerHTML = log_txt;
+  console.log(log_txt);
 }
 </script>
 
 <table>
   <tr>
     <td>
-      <button onclick="json2txt()">Uztaisi .txt</button>
+      <button onclick="json_to_serial()">Izvelc seriālos</button>
       <button onclick="json_beautify()">Izskaistini .jsonu</button>
       <button onclick="json_uglify()">Saspied .jsonu</button>
     </td>
-    <td><button onclick="txt2json()">Iebāz atpakaļ .jsonā</button></td>
+    <td>
+      <button onclick="serial_to_json()">Iebāz seriālos .jsonā</button>
+      <button onclick="">.</button>
+      <button onclick="serial_delete_from_json()">Izdzēs seriālos no .jsona</button>
+    </td>
+    <td><button onclick="zebra_to_serial()">Izvelc seriālos</button></td>
   </tr>
   <tr>
     <td>
-      <textarea id="txt_json"></textarea>
+      <textarea id="txt_json" placeholder=".json te"></textarea>
     </td>
     <td>
-      <textarea id="txt_txt"></textarea>
+      <textarea id="txt_serial" placeholder="seriālie te"></textarea>
     </td>
+    <td>
+      <textarea id="txt_zebra" placeholder="zebra te"></textarea>
+    </td>    
   </tr>
 </table>
+<label id="txt_log"></label>
 
 </body>
 </html>
