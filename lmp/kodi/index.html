@@ -125,6 +125,33 @@ function zebra_to_serial() {
   document.getElementById("txt_log").innerHTML = log_txt;
   console.log(log_txt);
 }
+
+function serial_check_duplicates() {
+  var all_lines = document.getElementById("txt_serial").value.split("\n");
+  var lines = [];
+  var duplicates = "";
+  var count = 0;
+
+  // brute-force, check for duplicates
+  for(i = 0; i < all_lines.length - 1; i++) {
+    // check if not empty and already reported
+    if((all_lines[i] != "") && (lines.indexOf(all_lines[i]) == -1)) {
+      for(j = i + 1; j < all_lines.length; j++) {
+        if(all_lines[i] == all_lines[j]) {
+          // save duplicate to avoid it reporting twice
+          lines.push(all_lines[i]);
+          duplicates += all_lines[i] + " (" + (i+1).toString() + " un " + (j+1).toString() + " rinda)<br>";
+          count++;
+        }
+      }
+    }
+  }
+
+  var log_txt = "Atrasti " + count.toString() + " dublikāti:<br>";
+  log_txt += duplicates;
+  document.getElementById("txt_log").innerHTML = log_txt;
+  console.log(log_txt);
+}
 </script>
 
 <table>
@@ -136,8 +163,8 @@ function zebra_to_serial() {
     </td>
     <td>
       <button onclick="serial_to_json()">Iebāz seriālos .jsonā</button>
-      <button onclick="">.</button>
       <button onclick="serial_delete_from_json()">Izdzēs seriālos no .jsona</button>
+      <button onclick="serial_check_duplicates()">Pārbaudi dublikātus</button>
     </td>
     <td><button onclick="zebra_to_serial()">Izvelc seriālos</button></td>
   </tr>
